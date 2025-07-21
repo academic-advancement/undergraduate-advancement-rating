@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Application Pentagon Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .form-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .form-section:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .help-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .level-note {
+            color: #888;
+            font-size: 0.85em;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            margin-bottom: 10px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .input-with-feedback {
+            position: relative;
+        }
+        
+        .score-bar {
+            height: 12px;
+            background: #ffffff;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            position: relative;
+            border: 1px solid #ddd;
+            overflow: hidden;
+        }
+        
+        .fill-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, 
+                #ff4444 0% 5%, #ffaa00 5% 10%, #44ff44 10% 15%, 
+                #4444ff 15% 20%, #aa44ff 20% 25%, #000000 25% 30%, 
+                #cccccc 30% 50%, #444444 50% 50%, #cccccc 50% 75%, 
+                #eeeeee 75% 100%, #ffffff 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .current-level {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+        
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .language-selector select {
+            flex: 1;
+            min-width: 150px;
+            margin-bottom: 0;
+        }
+        
+        .language-selector input {
+            flex: 1;
+            min-width: 100px;
+            margin-bottom: 0;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results {
+            margin-top: 40px;
+            text-align: center;
+            display: none;
+        }
+        
+        .pentagon-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            margin: 30px auto;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            text-align: left;
+        }
+        
+        .stat-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            color: #667eea;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .rating {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #764ba2;
+            margin: 20px 0;
+        }
+        
+        .optional {
+            color: #999;
+            font-size: 0.9em;
+        }
+        
+        .extracurricular-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .extracurricular-grid {
+                grid-template-columns: 1fr;
+            }
+            .pentagon-container {
+                width: 300px;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>College Application Pentagon Analysis System</h1>
+        
+        <form id="scoringForm">
+            <div class="form-section">
+                <div class="input-group">
+                    <label for="studentName">Student Name:</label>
+                    <input type="text" id="studentName" name="studentName" placeholder="Enter your name" required>
+                </div>
+            </div>
+
+            <!-- Standardized Test Score -->
+            <div class="form-section">
+                <div class="section-title">1. Standardized Test Score Academic</div>
+                <div class="level-note">1-6: Normal student level, 6+: Exceptionally rare, determining factor for college consideration</div>
+                
+                <div class="input-group">
+                    <label for="languageTest">Language Test <span class="optional">(Optional if American)</span>:</label>
+                    <div class="help-text">
+                        <strong>TOEFL iBT:</strong> 0-74(0) 75-89(1) 90-99(2) 100-104(3) 105-109(4) 110-114(5) 115-119(6) 120+(6.5)<br>
+                        <strong>IELTS:</strong> 0-5.0(0) 5.5-6.0(1) 6.0-6.5(2) 6.5-7.0(3) 7.0-7.5(4) 7.5-8.0(5) 8.0-8.5(6) 9.0(6.5)<br>
+                        <strong>DET:</strong> 0-84(0) 85-99(1) 100-114(2) 115-124(3) 125-134(4) 135-144(5) 145-154(6) 155+(6.5)<br>
+                        <strong>TOEFL Essentials:</strong> 0-5(0) 6-7(1) 7-8(2) 8-9(3) 9-10(4) 10-11(5) 11-12(6) 12+(6.5)
+                    </div>
+                    <div class="language-selector">
+                        <select id="languageTestType">
+                            <option value="">Select Test Type</option>
+                            <option value="toefl">TOEFL iBT</option>
+                            <option value="ielts">IELTS</option>
+                            <option value="det">Duolingo English Test</option>
+                            <option value="toefl-essentials">TOEFL Essentials</option>
+                        </select>
+                        <input type="number" id="languageScore" placeholder="Score" min="0">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="satScore">SAT Score <span class="optional">(Optional)</span>:</label>
+                    <div class="help-text">
+                        SAT: 400-1199(0) 1200-1349(1) 1350-1399(2) 1400-1449(3) 1450-1499(4) 1500-1549(5) 1550-1599(6) 1600(6.5)
+                    </div>
+                    <div class="input-with-feedback">
+                        <input type="number" id="satScore" placeholder="SAT Score (400-1600)" min="400" max="1600" oninput="updateScoreBar(this, 'sat')">
+                        <div class="score-bar"><div class="fill-bar"></div></div>
+                        <div class="current-level" id="satLevel"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic -->
+            <div class="form-section">
+                <div class="section-title">2. Academic Performance</div>
+                <div class="level-note">1-6: Normal student level, 6+: Exceptionally rare, determining factor for college consideration</div>
+                
+                <div class="input-group">
+                    <label for="apScore">AP Scores:</label>
+                    <div class="help-text">
+                        <strong>AP 5s:</strong> Count number of AP exams with score 5<br>
+                        0-4 exams with score 5(1-4) | 5 exams with score 5(5) | 10 exams with score 5(6) | 15 exams with score 5(6.5) | 20+ exams with score 5(7)
+                    </div>
+                    <div class="input-with-feedback">
+                        <input type="number" id="apScore" placeholder="Number of AP 5s" min="0" oninput="updateScoreBar(this, 'ap')">
+                        <div class="score-bar"><div class="fill-bar"></div></div>
+                        <div class="current-level" id="apLevel"></div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="gpaType">Academic System:</label>
+                    <select id="gpaType" onchange="updateGpaHelp(); updateScoreBar(document.getElementById('gpaScore'), 'gpa');">
+                        <option value="gpa4.0">US GPA (4.0 Scale)</option>
+                        <option value="gpa4.33">US GPA (4.33 Scale)</option>
+                        <option value="gpa5.0">US GPA (5.0 Scale)</option>
+                        <option value="gpa100">Percentage (100 Scale)</option>
+                        <option value="ib">IB Score (out of 45)</option>
+                        <option value="alevel">A-Level</option>
+                        <option value="dse">Hong Kong DSE</option>
+                        <option value="gaokao">Gaokao (China)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="gpaScore">Academic Score:</label>
+                    <div class="help-text" id="gpaHelp">
+                        <strong>4.0 Scale:</strong> 2.0-3.2(1-2) 3.3-3.5(3) 3.6-3.9(4) 4.0(5) 4.0+(6)<br>
+                        <strong>IB:</strong> 24-29(1) 30-34(2) 35-37(3) 38-41(4) 42-44(5) 45(6)<br>
+                        <strong>A-Level:</strong> CCC-BBC(1) BBC-ABB(2) ABB-AAB(3) AAB-AAA(4) AAA-A*AA(5) A*A*A*(6)
+                    </div>
+                    <div class="input-with-feedback">
+                        <input type="number" id="gpaScore" placeholder="Your Academic Score" step="0.01" min="0" oninput="updateScoreBar(this, 'gpa')">
+                        <div class="score-bar"><div class="fill-bar"></div></div>
+                        <div class="current-level" id="gpaLevel"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extracurriculars -->
+            <div class="form-section">
+                <div class="section-title">3. Extracurricular Activities <span class="optional">(All sections optional)</span></div>
+                <div class="level-note">1-6: Normal student level, 6+: Exceptionally rare, determining factor for college consideration</div>
+                <div class="help-text">
+                    If no sections filled: score = 1 | If 2 sections same score: +1 bonus | If 3 sections same score: +2 bonus
+                </div>
+                
+                <div class="extracurricular-grid">
+                    <div class="input-group">
+                        <label for="researchScore">Research & Publications:</label>
+                        <div class="help-text">
+                            <strong>Research Levels:</strong><br>
+                            1: Interest essays, basic lab reports<br>
+                            2: School research projects, science fair<br>
+                            3: Published paper (non-peer reviewed), conference abstract<br>
+                            4: Multiple papers, peer-reviewed publication<br>
+                            5: Multiple peer-reviewed papers, co-author<br>
+                            6: First author, h-index 2+, SCI journal<br>
+                            7-10: Multiple SCI papers, h-index 5+<br>
+                            11-20: Breakthrough research, Nature/Science
+                        </div>
+                        <div class="input-with-feedback">
+                            <input type="number" id="researchScore" placeholder="Research score (0-20)" min="0" max="20" oninput="updateScoreBar(this, 'research')">
+                            <div class="score-bar"><div class="fill-bar"></div></div>
+                            <div class="current-level" id="researchLevel"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="awardScore">Awards & Competitions:</label>
+                        <div class="help-text">
+                            <strong>Award Levels:</strong><br>
+                            1: School awards, honor roll<br>
+                            2: Merit scholarships (local)<br>
+                            3: Regional competitions, city awards<br>
+                            4: State competitions, merit scholarships<br>
+                            5: National competitions, prestigious scholarships<br>
+                            6: International competitions, national scholarships<br>
+                            7-10: Olympics, major international awards<br>
+                            11-20: World-renowned competitions winner
+                        </div>
+                        <div class="input-with-feedback">
+                            <input type="number" id="awardScore" placeholder="Award score (0-20)" min="0" max="20" oninput="updateScoreBar(this, 'award')">
+                            <div class="score-bar"><div class="fill-bar"></div></div>
+                            <div class="current-level" id="awardLevel"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="leadershipScore">Leadership & Business:</label>
+                        <div class="help-text">
+                            <strong>Leadership Levels:</strong><br>
+                            1: Club member, volunteer<br>
+                            2: Club officer, team leader<br>
+                            3: Club president, student council<br>
+                            4: Student body president, multiple leadership roles<br>
+                            5: School-wide impact, founding president<br>
+                            6: Community leadership, internship at major firms<br>
+                            7-10: Regional impact, startup founder, fellowship<br>
+                            11-20: National impact, successful business, unicorn startup
+                        </div>
+                        <div class="input-with-feedback">
+                            <input type="number" id="leadershipScore" placeholder="Leadership score (0-20)" min="0" max="20" oninput="updateScoreBar(this, 'leadership')">
+                            <div class="score-bar"><div class="fill-bar"></div></div>
+                            <div class="current-level" id="leadershipLevel"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sports -->
+            <div class="form-section">
+                <div class="section-title">4. Sports & Athletics</div>
+                <div class="level-note">1-6: Normal student level, 6+: Exceptionally rare, determining factor for college consideration</div>
+                
+                <div class="input-group">
+                    <label for="sportsScore">Sports Achievement:</label>
+                    <div class="help-text">
+                        <strong>Sports Levels:</strong><br>
+                        1: Recreational sports, intramural<br>
+                        2: JV team member, regular training<br>
+                        3: Varsity team member, consistent player<br>
+                        4: Varsity regular, team contributor<br>
+                        5: Varsity captain, team MVP, regional winner<br>
+                        6: State level competitor, recruited athlete<br>
+                        7-10: Professional student athlete, national level<br>
+                        11-20: Sports star, Olympic level, professional prospect
+                    </div>
+                    <div class="input-with-feedback">
+                        <input type="number" id="sportsScore" placeholder="Sports score (0-20)" min="0" max="20" oninput="updateScoreBar(this, 'sports')">
+                        <div class="score-bar"><div class="fill-bar"></div></div>
+                        <div class="current-level" id="sportsLevel"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Activities -->
+            <div class="form-section">
+                <div class="section-title">5. Social Activities & Impact</div>
+                <div class="level-note">1-6: Normal student level, 6+: Exceptionally rare, determining factor for college consideration</div>
+                
+                <div class="input-group">
+                    <label for="socialScore">Social Impact & Service:</label>
+                    <div class="help-text">
+                        <strong>Social Impact Levels:</strong><br>
+                        1: Basic volunteer work, community service<br>
+                        2: Regular volunteering, local charity work<br>
+                        3: Volunteer leadership, organizing events<br>
+                        4: Community project leader, significant hours<br>
+                        5: Founding social initiatives, measurable impact<br>
+                        6: Regional social influence, media recognition<br>
+                        7-10: State/national social impact, policy influence<br>
+                        11-20: World-changing social impact, global influence
+                    </div>
+                    <div class="input-with-feedback">
+                        <input type="number" id="socialScore" placeholder="Social score (0-20)" min="0" max="20" oninput="updateScoreBar(this, 'social')">
+                        <div class="score-bar"><div class="fill-bar"></div></div>
+                        <div class="current-level" id="socialLevel"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Generate Pentagon Analysis</button>
+        </form>
+
+        <div id="results" class="results">
+            <h2 id="analysisTitle">Student's Pentagon Analysis Graph</h2>
+            <div class="pentagon-container">
+                <canvas id="pentagonCanvas" width="500" height="500"></canvas>
+            </div>
+            <div class="legend" id="legend"></div>
+            <div class="rating" id="rating">Rating: 0.00%</div>
+            <div class="stats-summary" id="statsSummary"></div>
+        </div>
+    </div>
+
+    <script>
+        // Helper functions for computing points
+        function computeSatPoints(raw) {
+            if (raw >= 1600) return 6.5;
+            if (raw >= 1550) return 6;
+            if (raw >= 1500) return 5;
+            if (raw >= 1450) return 4;
+            if (raw >= 1400) return 3;
+            if (raw >= 1350) return 2;
+            if (raw >= 1200) return 1;
+            return 0;
+        }
+
+        function computeApPoints(raw) {
+            if (raw >= 20) return 7;
+            if (raw >= 15) return 6.5;
+            if (raw >= 10) return 6;
+            if (raw >= 5) return 5;
+            return Math.min(raw, 4);
+        }
+
+        function computeGpaPoints(raw, gpaType) {
+            let points = 0;
+            switch (gpaType) {
+                case 'gpa4.0':
+                    if (raw > 4.0) points = 6;
+                    else if (raw >= 4.0) points = 5;
+                    else if (raw >= 3.6) points = 4;
+                    else if (raw >= 3.3) points = 3;
+                    else if (raw >= 3.0) points = 2;
+                    else if (raw >= 2.0) points = 1;
+                    break;
+                case 'gpa4.33':
+                    if (raw > 4.33) points = 6;
+                    else if (raw >= 4.1) points = 5;
+                    else if (raw >= 3.8) points = 4;
+                    else if (raw >= 3.5) points = 3;
+                    else if (raw >= 3.0) points = 2;
+                    else if (raw >= 2.5) points = 1;
+                    break;
+                case 'gpa5.0':
+                    if (raw > 5.0) points = 6;
+                    else if (raw >= 4.7) points = 5;
+                    else if (raw >= 4.3) points = 4;
+                    else if (raw >= 4.0) points = 3;
+                    else if (raw >= 3.5) points = 2;
+                    else if (raw >= 3.0) points = 1;
+                    break;
+                case 'gpa100':
+                    if (raw >= 95) points = 6;
+                    else if (raw >= 90) points = 5;
+                    else if (raw >= 85) points = 4;
+                    else if (raw >= 80) points = 3;
+                    else if (raw >= 75) points = 2;
+                    else if (raw >= 70) points = 1;
+                    break;
+                case 'ib':
+                    if (raw >= 45) points = 6;
+                    else if (raw >= 42) points = 5;
+                    else if (raw >= 38) points = 4;
+                    else if (raw >= 35) points = 3;
+                    else if (raw >= 30) points = 2;
+                    else if (raw >= 24) points = 1;
+                    break;
+                case 'alevel':
+                    // Assume user inputs level 1-6 based on help
+                    points = Math.min(6, Math.max(0, raw));
+                    break;
+                case 'dse':
+                    // Assume user inputs level 1-6 based on help
+                    points = Math.min(6, Math.max(0, raw));
+                    break;
+                case 'gaokao':
+                    if (raw >= 700) points = 6;
+                    else if (raw >= 650) points = 5;
+                    else if (raw >= 600) points = 4;
+                    else if (raw >= 550) points = 3;
+                    else if (raw >= 500) points = 2;
+                    else if (raw >= 400) points = 1;
+                    break;
+            }
+            return points;
+        }
+
+        // Score bar update function
+        function updateScoreBar(input, type) {
+            const raw = parseFloat(input.value) || 0;
+            let computed = raw;
+            if (type === 'sat') computed = computeSatPoints(raw);
+            else if (type === 'ap') computed = computeApPoints(raw);
+            else if (type === 'gpa') {
+                const gpaType = document.getElementById('gpaType').value;
+                computed = computeGpaPoints(raw, gpaType);
+            }
+            const percentage = Math.min((computed / 20) * 100, 100);
+            const fillBar = input.parentNode.querySelector('.fill-bar');
+            fillBar.style.width = percentage + '%';
+            const levelDisplay = document.getElementById(type + 'Level');
+            let levelText = getLevelText(type, raw);
+            levelDisplay.textContent = levelText;
+        }
+
+        function getLevelText(type, raw) {
+            let value = raw;
+            if (type === 'sat') value = computeSatPoints(raw);
+            else if (type === 'ap') value = computeApPoints(raw);
+            else if (type === 'gpa') {
+                const gpaType = document.getElementById('gpaType').value;
+                value = computeGpaPoints(raw, gpaType);
+            }
+            if (value === 0) return 'No score entered';
+            
+            const levels = {
+                sat: {
+                    1: 'Below Average (1200-1349)',
+                    2: 'Average (1350-1399)',
+                    3: 'Good (1400-1449)',
+                    4: 'Very Good (1450-1499)',
+                    5: 'Excellent (1500-1549)',
+                    6: 'Outstanding (1550-1599)',
+                    6.5: 'Perfect (1600)'
+                },
+                ap: {
+                    1: 'Basic (1 AP 5)',
+                    2: 'Good (2 AP 5s)',
+                    3: 'Very Good (3 AP 5s)',
+                    4: 'Excellent (4 AP 5s)',
+                    5: 'Outstanding (5 AP 5s)',
+                    6: 'Exceptional (10 AP 5s)',
+                    6.5: 'Elite (15 AP 5s)',
+                    7: 'Legendary (20+ AP 5s)'
+                },
+                gpa: {
+                    1: 'Below Average',
+                    2: 'Average',
+                    3: 'Good',
+                    4: 'Very Good',
+                    5: 'Excellent',
+                    6: 'Outstanding'
+                },
+                research: {
+                    1: 'Basic Interest (Essays)',
+                    2: 'School Projects',
+                    3: 'Published Work',
+                    4: 'Peer-reviewed',
+                    5: 'Multiple Publications',
+                    6: 'SCI Journal',
+                    10: 'Breakthrough Research',
+                    20: 'World-class Research'
+                },
+                award: {
+                    1: 'School Awards',
+                    2: 'Merit Scholarships',
+                    3: 'Regional Awards',
+                    4: 'State Level',
+                    5: 'National Level',
+                    6: 'International',
+                    10: 'Olympic Level',
+                    20: 'World Champion'
+                },
+                leadership: {
+                    1: 'Club Member',
+                    2: 'Club Officer',
+                    3: 'President/Council',
+                    4: 'Student Body Leader',
+                    5: 'Founding President',
+                    6: 'Community Leader',
+                    10: 'Regional Impact',
+                    20: 'National Business Success'
+                },
+                sports: {
+                    1: 'Recreational',
+                    2: 'JV Team',
+                    3: 'Varsity Member',
+                    4: 'Regular Player',
+                    5: 'Team Captain/MVP',
+                    6: 'State Competitor',
+                    10: 'Professional Student Athlete',
+                    20: 'Sports Star/Olympic'
+                },
+                social: {
+                    1: 'Basic Volunteer',
+                    2: 'Regular Volunteer',
+                    3: 'Volunteer Leader',
+                    4: 'Project Leader',
+                    5: 'Social Initiative Founder',
+                    6: 'Regional Influence',
+                    10: 'National Impact',
+                    20: 'World-changing Impact'
+                }
+            };
+            
+            const typeLevels = levels[type] || {};
+            let closest = 0;
+            Object.keys(typeLevels).sort((a, b) => a - b).forEach(level => {
+                if (value >= parseFloat(level)) {
+                    closest = level;
+                }
+            });
+            return typeLevels[closest] || 'Advanced Level';
+        }
+
+        // GPA type change handler
+        function updateGpaHelp() {
+            const gpaHelp = document.getElementById('gpaHelp');
+            const type = document.getElementById('gpaType').value;
+            
+            const helpTexts = {
+                'gpa4.0': '<strong>4.0 Scale:</strong> 2.0-3.2(1-2) 3.3-3.5(3) 3.6-3.9(4) 4.0(5) 4.0+(6)',
+                'gpa4.33': '<strong>4.33 Scale:</strong> 2.5-3.5(1-2) 3.5-3.8(3) 3.8-4.1(4) 4.1-4.33(5) 4.33+(6)',
+                'gpa5.0': '<strong>5.0 Scale:</strong> 3.0-4.0(1-2) 4.0-4.3(3) 4.3-4.7(4) 4.7-5.0(5) 5.0+(6)',
+                'gpa100': '<strong>100 Scale:</strong> 60-79(1-2) 80-84(3) 85-89(4) 90-94(5) 95+(6)',
+                'ib': '<strong>IB Score:</strong> 24-29(1) 30-34(2) 35-37(3) 38-41(4) 42-44(5) 45(6)',
+                'alevel': '<strong>A-Level:</strong> CCC-BBC(1) BBC-ABB(2) ABB-AAB(3) AAB-AAA(4) AAA-A*AA(5) A*A*A*(6)',
+                'dse': '<strong>Hong Kong DSE:</strong> Level 2-3(1) Level 3-4(2) Level 4(3) Level 4-5(4) Level 5(5) Level 5**(6)',
+                'gaokao': '<strong>Gaokao:</strong> 400-500(1) 500-550(2) 550-600(3) 600-650(4) 650-700(5) 700+(6)'
+            };
+            
+            gpaHelp.innerHTML = helpTexts[type] || helpTexts['gpa4.0'];
+        }
+
+        document.getElementById('scoringForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateAndDisplayResults();
+        });
+
+        function calculateStandardizedScore() {
+            const languageType = document.getElementById('languageTestType').value;
+            const languageScore = parseFloat(document.getElementById('languageScore').value) || 0;
+            const satScore = parseFloat(document.getElementById('satScore').value) || 0;
+            
+            let languagePoints = 0;
+            let satPoints = 0;
+            let languageDisplay = '';
+            
+            if (languageType && languageScore > 0) {
+                switch(languageType) {
+                    case 'toefl':
+                        if (languageScore >= 120) languagePoints = 6.5;
+                        else if (languageScore >= 115) languagePoints = 6;
+                        else if (languageScore >= 110) languagePoints = 5;
+                        else if (languageScore >= 105) languagePoints = 4;
+                        else if (languageScore >= 100) languagePoints = 3;
+                        else if (languageScore >= 90) languagePoints = 2;
+                        else if (languageScore >= 75) languagePoints = 1;
+                        languageDisplay = `TOEFL iBT Score: ${languageScore} (${languagePoints})`;
+                        break;
+                    case 'ielts':
+                        if (languageScore >= 9.0) languagePoints = 6.5;
+                        else if (languageScore >= 8.0) languagePoints = 6;
+                        else if (languageScore >= 7.5) languagePoints = 5;
+                        else if (languageScore >= 7.0) languagePoints = 4;
+                        else if (languageScore >= 6.5) languagePoints = 3;
+                        else if (languageScore >= 6.0) languagePoints = 2;
+                        else if (languageScore >= 5.5) languagePoints = 1;
+                        languageDisplay = `IELTS Score: ${languageScore} (${languagePoints})`;
+                        break;
+                    case 'det':
+                        if (languageScore >= 155) languagePoints = 6.5;
+                        else if (languageScore >= 145) languagePoints = 6;
+                        else if (languageScore >= 135) languagePoints = 5;
+                        else if (languageScore >= 125) languagePoints = 4;
+                        else if (languageScore >= 115) languagePoints = 3;
+                        else if (languageScore >= 100) languagePoints = 2;
+                        else if (languageScore >= 85) languagePoints = 1;
+                        languageDisplay = `DET Score: ${languageScore} (${languagePoints})`;
+                        break;
+                    case 'toefl-essentials':
+                        if (languageScore >= 12) languagePoints = 6.5;
+                        else if (languageScore >= 11) languagePoints = 6;
+                        else if (languageScore >= 10) languagePoints = 5;
+                        else if (languageScore >= 9) languagePoints = 4;
+                        else if (languageScore >= 8) languagePoints = 3;
+                        else if (languageScore >= 7) languagePoints = 2;
+                        else if (languageScore >= 6) languagePoints = 1;
+                        languageDisplay = `TOEFL Essentials Score: ${languageScore} (${languagePoints})`;
+                        break;
+                }
+            }
+            
+            if (satScore > 0) {
+                satPoints = computeSatPoints(satScore);
+            }
+            
+            let finalScore = Math.max(languagePoints, satPoints);
+            const academicScore = calculateAcademicScore();
+            
+            if (finalScore === 0) {
+                finalScore = academicScore;
+            } else {
+                const diff = Math.abs(finalScore - academicScore);
+                if (diff > 1) {
+                    finalScore = Math.max(finalScore, academicScore) - diff;
+                }
+            }
+            
+            return {
+                score: Math.max(0, finalScore),
+                display: languageDisplay || (satScore > 0 ? `SAT Score: ${satScore} (${satPoints})` : 'No standardized test')
+            };
+        }
+
+        function calculateAcademicScore() {
+            const apScore = parseFloat(document.getElementById('apScore').value) || 0;
+            const gpaType = document.getElementById('gpaType').value;
+            const gpaScore = parseFloat(document.getElementById('gpaScore').value) || 0;
+            
+            const apPoints = computeApPoints(apScore);
+            const gpaPoints = computeGpaPoints(gpaScore, gpaType);
+            
+            let final = Math.max(apPoints, gpaPoints);
+            const diff = Math.abs(apPoints - gpaPoints);
+            if (apPoints === gpaPoints && apPoints > 0) {
+                final += 1;
+            } else if (diff > 1) {
+                final -= diff;
+            }
+            return Math.max(0, final);
+        }
+
+        function calculateExtracurricularScore() {
+            const research = parseFloat(document.getElementById('researchScore').value) || 0;
+            const award = parseFloat(document.getElementById('awardScore').value) || 0;
+            const leadership = parseFloat(document.getElementById('leadershipScore').value) || 0;
+            
+            const scoresList = [research, award, leadership].filter(s => s > 0);
+            if (scoresList.length === 0) return 1;
+            
+            const maxS = Math.max(research, award, leadership);
+            const countSameMax = [research, award, leadership].filter(s => s === maxS).length;
+            let bonus = 0;
+            if (countSameMax >= 3) bonus = 2;
+            else if (countSameMax >= 2) bonus = 1;
+            return maxS + bonus;
+        }
+
+        function calculateAndDisplayResults() {
+            const studentName = document.getElementById('studentName').value || 'Student';
+            
+            const standardized = calculateStandardizedScore();
+            const academic = calculateAcademicScore();
+            const extracurricular = calculateExtracurricularScore();
+            const sports = parseFloat(document.getElementById('sportsScore').value) || 0;
+            const social = parseFloat(document.getElementById('socialScore').value) || 0;
+            
+            const scores = [standardized.score, academic, extracurricular, sports, social];
+            const labels = ['Standardized Tests', 'Academic', 'Extracurriculars', 'Sports', 'Social Activities'];
+            const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+            
+            // Display results
+            document.getElementById('analysisTitle').textContent = `${studentName}'s Pentagon Analysis Graph`;
+            
+            const totalScore = scores.reduce((sum, score) => sum + score, 0);
+            const rating = ((totalScore / 30) * 100).toFixed(2);
+            document.getElementById('rating').textContent = `Rating: ${rating}%`;
+            
+            // Create legend
+            const legendElement = document.getElementById('legend');
+            legendElement.innerHTML = '';
+            scores.forEach((score, index) => {
+                const legendItem = document.createElement('div');
+                legendItem.className = 'legend-item';
+                legendItem.innerHTML = `
+                    <div class="legend-color" style="background-color: ${colors[index]}"></div>
+                    <span>${labels[index]}: ${score.toFixed(1)}</span>
+                `;
+                legendElement.appendChild(legendItem);
+            });
+            
+            // Create stats summary
+            const summaryElement = document.getElementById('statsSummary');
+            summaryElement.innerHTML = '';
+            
+            const stats = [
+                { title: 'Standardized Test', value: standardized.display },
+                { title: 'Academic Performance', value: `Academic Score: ${academic.toFixed(1)}` },
+                { title: 'Extracurriculars', value: `Extracurricular Score: ${extracurricular.toFixed(1)}` },
+                { title: 'Sports Achievement', value: `Sports Score: ${sports.toFixed(1)}` },
+                { title: 'Social Impact', value: `Social Score: ${social.toFixed(1)}` }
+            ];
+            
+            stats.forEach(stat => {
+                const statCard = document.createElement('div');
+                statCard.className = 'stat-card';
+                statCard.innerHTML = `
+                    <div class="stat-title">${stat.title}</div>
+                    <div class="stat-value">${stat.value}</div>
+                `;
+                summaryElement.appendChild(statCard);
+            });
+            
+            // Draw pentagon
+            drawPentagon(scores, colors);
+            
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function drawPentagon(scores, colors) {
+            const canvas = document.getElementById('pentagonCanvas');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const maxRadius = 200;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background grid
+            for (let level = 1; level <= 6; level++) {
+                ctx.beginPath();
+                ctx.strokeStyle = '#e0e0e0';
+                ctx.lineWidth = 1;
+                
+                for (let i = 0; i <= 5; i++) {
+                    const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+                    const radius = (level / 6) * maxRadius;
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+            }
+            
+            // Draw axis lines
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 5; i++) {
+                const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(centerX + Math.cos(angle) * maxRadius, centerY + Math.sin(angle) * maxRadius);
+                ctx.stroke();
+            }
+            
+            // Draw data pentagon
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            
+            for (let i = 0; i <= 5; i++) {
+                const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+                const normalizedScore = scores[i % 5] / 6;
+                const radius = normalizedScore * maxRadius;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Draw data points
+            for (let i = 0; i < 5; i++) {
+                const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+                const normalizedScore = scores[i] / 6;
+                const radius = normalizedScore * maxRadius;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+            
+            // Draw labels
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            
+            const labelTexts = ['Tests', 'Academic', 'Extracur.', 'Sports', 'Social'];
+            for (let i = 0; i < 5; i++) {
+                const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+                const labelRadius = maxRadius + 25;
+                const x = centerX + Math.cos(angle) * labelRadius;
+                const y = centerY + Math.sin(angle) * labelRadius;
+                
+                ctx.fillText(labelTexts[i], x, y + 5);
+            }
+        }
+
+        // Initial call for GPA help
+        updateGpaHelp();
+    </script>
+</body>
+</html>
