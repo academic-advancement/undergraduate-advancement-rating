@@ -327,8 +327,10 @@
                 <div class="input-group">
                     <label for="apScore">AP Scores <span class="optional">(Optional)</span>:</label>
                     <div class="help-text">
-                        <strong>*(Leave blank or enter 0 if none, e.g., for IB students)</strong> Count number of AP exams with score 5<br>
-                        0-4 exams with score 5(1-4) | 5 exams with score 5(5) | 10 exams with score 5(6) | 15 exams with score 5(6.5) | 20+ exams with score 5(7)
+                        (<strong>*Leave blank or enter 0</strong>
+                        if don't have any AP or number of AP with score of 5 <  5)
+                        Count number of AP exams with score 5<br>
+                        5 exams with score 5(5) | 10 exams with score 5(6) | 15 exams with score 5(6.5) | 20+ exams with score 5(7)
                     </div>
                     <div class="input-with-feedback">
                         <input type="number" id="apScore" placeholder="Number of AP 5s" min="0" oninput="updateScoreBar(this, 'ap')">
